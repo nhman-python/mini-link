@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block header %}
+<h2>Hi, {{ session.user }}! Welcome to Your Dashboard</h2>
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-primary btn-lg btn-custom rounded-pill" data-bs-toggle="modal"
+                    data-bs-target="#createLinkModal">
+                <i class="bi bi-plus-circle-fill me-2"></i> Create New
+            </button>
+        </div>
+        <div class="col-md-6">
+            <button type="button" class="btn btn-secondary btn-lg btn-custom rounded-pill" data-bs-toggle="modal"
+                    data-bs-target="#customLinkModal">
+                <i class="bi bi-link-45deg me-2"></i> Custom Short Link
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-4">
+    {% include 'flash_messages.html' %}
+
+    {% if links %}
+    <h3>Your Short Links</h3>
+    <div class="table-container">
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th><i class="bi bi-arrow-return-right"></i> Original URL</th>
+                    <th>Short Link</th>
+                    <th><i class="bi bi-eye-fill"></i> View</th>
+                    <th>Created At</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for link in links %}
+                <tr>
+                    <td class="url-cell">{{ link.redirect_url }}</td>
+                    <td>
+                        <a href="{{ link.internal_url }}" target="_blank">{{ link.internal_url }}</a>
+                    </td>
+                    <td>{{ link.view }}</td>
+                    <td>{{ link.create_at }}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#deleteModal{{ loop.index }}">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal{{ loop.index }}" tabindex="-1"
+                     aria-labelledby="deleteModalLabel{{ loop.index }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel{{ loop.index }}">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this link?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <form method="POST" action="/delete/{{ link.internal_url }}">
+                                    {{ form.csrf_token() }}
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="fs-1 text">No links found. Create one now.</p>
+        {% endif %}
+
+    </div>
+
+    <!-- Create Link Modal -->
+    <div class="modal fade" id="createLinkModal" tabindex="-1" aria-labelledby="createLinkModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createLinkModalLabel">Create New Link</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="/random-link">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="redirect_url" class="form-label">Original URL</label>
+                            {{ form.redirect_url(class="form-control", required=true, placeholder="https://example.com")
+                            }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="length" class="form-label">Link Length</label>
+                            {{ form.length(class="form-control", type="number", min="4", required=true, placeholder="4 - 20") }}
+                        </div>
+                        <button type="submit" class="bi bi-cursor-fill btn btn-primary btn-block"> Create Short Link</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Link Modal -->
+    <div class="modal fade" id="customLinkModal" tabindex="-1" aria-labelledby="customLinkModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customLinkModalLabel">Create Custom Short Link</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="/custom-link">
+                        {{ custom_link_form.csrf_token() }}
+                        <div class="mb-3">
+                            <label for="custom_link" class="form-label">Custom Link</label>
+                            {{ custom_link_form.custom_link(class="form-control", required=true, placeholder="my-link")
+                            }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="redirect_url" class="form-label">Original URL</label>
+                            {{ custom_link_form.redirect_url(class="form-control", required=true,
+                            placeholder="https://example.com/page") }}
+                        </div>
+                        <button type="submit" class="bi bi-cursor-fill btn btn-primary btn-block"> Create Custom Link</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

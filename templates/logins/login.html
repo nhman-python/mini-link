@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block header %}
+    <i class="bi bi-door-open"></i> Login
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container-xl mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="p-4 p-md-5 border rounded-3 bg-light">
+                    <div class="card-body">
+                        <form method="POST" id="login-form">
+                            {{ form.hidden_tag() }}
+
+                            {% include 'flash_messages.html' %}
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label h5"><i class="bi bi-person"></i> Username</label>
+                                {{ form.username(class="form-control form-control-lg", id="username", required=True, placeholder="e.g. username") }}
+                                <div class="invalid-feedback" id="username-error"></div>
+                            </div>
+                            <div class="mb-3 position-relative">
+                                <label for="password" class="form-label h5"><i class="bi bi-lock"></i> Password</label>
+                                <div class="input-group">
+                                    {{ form.password(class="form-control form-control-lg", id="password", required=True, placeholder="") }}
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill password-toggle-btn" onclick="togglePasswordVisibility()">
+                                        <i id="eye-icon" class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="password-error"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block rounded-pill"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+                        </form>
+                        <p class="mt-3 text-center">Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    var passwordInput = document.getElementById("password");
+    var usernameInput = document.getElementById("username");
+    var eyeIcon = document.getElementById("eye-icon");
+
+    function togglePasswordVisibility() {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.remove("bi-eye");
+            eyeIcon.classList.add("bi-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.remove("bi-eye-slash");
+            eyeIcon.classList.add("bi-eye");
+        }
+    }
+
+    // Add input validation here using JavaScript
+    passwordInput.addEventListener("input", validatePassword);
+    usernameInput.addEventListener("input", validateUsername);
+
+    function validatePassword() {
+        var passwordError = document.getElementById("password-error");
+        var passwordValue = passwordInput.value;
+        if (passwordValue.length < 8) {
+            passwordError.textContent = "Password must be at least 8 characters long.";
+            passwordInput.classList.add("is-invalid");
+        } else {
+            passwordError.textContent = "";
+            passwordInput.classList.remove("is-invalid");
+        }
+    }
+
+    function validateUsername() {
+        var usernameError = document.getElementById("username-error");
+        var usernameValue = usernameInput.value;
+        if (usernameValue.length < 6 || usernameValue.length > 20) {
+            usernameError.textContent = "Username must be between 6 and 20 characters.";
+            usernameInput.classList.add("is-invalid");
+        } else {
+            usernameError.textContent = "";
+            usernameInput.classList.remove("is-invalid");
+        }
+    }
+
+    document.getElementById("login-form").addEventListener("submit", function (e) {
+        // Prevent form submission if there are validation errors
+        if (usernameInput.classList.contains("is-invalid") || passwordInput.classList.contains("is-invalid")) {
+            e.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

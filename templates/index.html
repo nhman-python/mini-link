@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Shorten URLs | Short Links{% endblock %}
+
+{% block header %}
+<h1 class="display-4">Home</h1>
+{% endblock %}
+
+{% block content %}
+<section class="content-section py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Why Choose Short Links?</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-4 mb-4">
+                <div class="feature-box text-center">
+                    <i class="bi bi-link feature-icon"></i>
+                    <h3 class="feature-title">Shorten URLs</h3>
+                    <p class="feature-description">Convert long URLs into short, easy-to-share links.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="feature-box text-center">
+                    <i class="bi bi-bar-chart feature-icon"></i>
+                    <h3 class="feature-title">Track Analytics</h3>
+                    <p class="feature-description">Monitor link performance with detailed analytics.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="feature-box text-center">
+                    <i class="bi bi-lock feature-icon"></i>
+                    <h3 class="feature-title">Secure Links</h3>
+                    <p class="feature-description">Protect your links with expiration options.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="header-content text-center py-5">
+    <div class="container">
+        <i class="bi bi-link-45deg display-1 text-primary"></i>
+        <h1 class="header-title mt-3">Shorten URLs and Simplify Links</h1>
+        <p class="header-description mt-3">
+            Turn long, complex URLs into short, memorable links. Share them easily on social media,
+            emails, or anywhere you want.
+        </p>
+        {% include 'flash_messages.html' %}
+        <div class="d-grid gap-2 col-6 mx-auto">
+            {% if session.user %}
+            <a href="/dashboard" type="button" class="btn btn-outline-primary btn-lg">Start Shortening</a>
+            {% else %}
+            <a href="/register" type="button" class="btn btn-outline-info btn-lg">Get Started</a>
+
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

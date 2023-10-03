@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+{% block header %}
+<i class="bi bi-person-plus"></i> Signup
+{% endblock %}
+{% block content %}
+<main>
+    <div class="container-xl mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="p-4 p-md-5 border rounded-3 bg-light">
+                    <div class="card-body">
+                        <form method="POST" id="register-form">
+                            {{ form.hidden_tag() }}
+                            {% include 'flash_messages.html' %}
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label h5"><i class="bi bi-person"></i> Username</label>
+                                {{ form.username(class="form-control form-control-lg", id="username", required=True) }}
+                                <div class="invalid-feedback" id="username-error"></div>
+                            </div>
+                            <div class="mb-3 position-relative">
+                                <label for="password" class="form-label h5"><i class="bi bi-lock"></i> Password</label>
+                                <div class="input-group">
+                                    {{ form.password(class="form-control form-control-lg", id="password", required=True) }}
+                                    <button type="button"
+                                            class="btn btn-outline-secondary rounded-pill password-toggle-btn"
+                                            onclick="togglePasswordVisibility('password', 'eye-icon')">
+                                        <i id="eye-icon" class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="password-error"></div>
+                            </div>
+                            <div class="mb-3 position-relative">
+                                <label for="confirm_password" class="form-label h5"><i class="bi bi-lock"></i> Confirm Password</label>
+                                <div class="input-group">
+                                    {{ form.confirm_password(class="form-control form-control-lg",
+                                    id="confirm_password", required=True) }}
+                                    <button type="button"
+                                            class="btn btn-outline-secondary rounded-pill password-toggle-btn"
+                                            onclick="togglePasswordVisibility('confirm_password', 'confirm-eye-icon')">
+                                        <i id="confirm-eye-icon" class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="confirm-password-error"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label h5"><i class="bi bi-envelope"></i> Email</label>
+                                {{ form.email(class="form-control form-control-lg", id="email", required=True) }}
+                                <div class="invalid-feedback" id="email-error"></div>
+                            </div>
+                            <div id="button-container">
+                                <button type="submit" id="register-button" class="btn btn-primary btn-lg btn-block rounded-pill custom-button-style">
+                                    <i class="bi bi-person-plus"></i> <span id="button-text">Register</span>
+                                </button>
+                            </div>
+                            <div class="text-center mt-3" id="loading-spinner" style="display: none;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-impaired">Loading...</span>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="mt-3 text-center">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    function togglePasswordVisibility(inputId, eyeIconId) {
+        var passwordInput = document.getElementById(inputId);
+        var eyeIcon = document.getElementById(eyeIconId);
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.remove("bi-eye");
+            eyeIcon.classList.add("bi-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.remove("bi-eye-slash");
+            eyeIcon.classList.add("bi-eye");
+        }
+    }
+
+    // Add input validation here using JavaScript
+    var usernameInput = document.getElementById("username");
+    var passwordInput = document.getElementById("password");
+    var confirmPasswordInput = document.getElementById("confirm_password");
+    var emailInput = document.getElementById("email");
+
+    usernameInput.addEventListener("input", validateUsername);
+    passwordInput.addEventListener("input", validatePassword);
+    confirmPasswordInput.addEventListener("input", validateConfirmPassword);
+    emailInput.addEventListener("input", validateEmail);
+
+    function validateUsername() {
+        var usernameError = document.getElementById("username-error");
+        var usernameValue = usernameInput.value.trim();
+        if (usernameValue.length < 6 || usernameValue.length > 20) {
+            usernameError.textContent = "Username must be between 6 and 20 characters.";
+            usernameInput.classList.add("is-invalid");
+        } else {
+            usernameError.textContent = "";
+            usernameInput.classList.remove("is-invalid");
+        }
+    }
+
+    function validatePassword() {
+        var passwordError = document.getElementById("password-error");
+        var passwordValue = passwordInput.value;
+        if (passwordValue.length < 8) {
+            passwordError.textContent = "Password must be at least 8 characters long.";
+            passwordInput.classList.add("is-invalid");
+        } else {
+            passwordError.textContent = "";
+            passwordInput.classList.remove("is-invalid");
+        }
+    }
+
+    function validateConfirmPassword() {
+        var confirmPasswordError = document.getElementById("confirm-password-error");
+        var confirmPasswordValue = confirmPasswordInput.value;
+        var passwordValue = passwordInput.value;
+        if (confirmPasswordValue !== passwordValue) {
+            confirmPasswordError.textContent = "Passwords do not match.";
+            confirmPasswordInput.classList.add("is-invalid");
+        } else {
+            confirmPasswordError.textContent = "";
+            confirmPasswordInput.classList.remove("is-invalid");
+        }
+    }
+
+    function validateEmail() {
+        var emailError = document.getElementById("email-error");
+        var emailValue = emailInput.value.trim();
+        if (!emailValue.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+            emailError.textContent = "Invalid email address.";
+            emailInput.classList.add("is-invalid");
+        } else {
+            emailError.textContent = "";
+            emailInput.classList.remove("is-invalid");
+        }
+    }
+
+    document.getElementById("register-form").addEventListener("submit", function (e) {
+        // Prevent form submission if there are validation errors
+        if (usernameInput.classList.contains("is-invalid") || passwordInput.classList.contains("is-invalid") || confirmPasswordInput.classList.contains("is-invalid") || emailInput.classList.contains("is-invalid")) {
+            e.preventDefault();
+        }
+    });
+
+</script>
+{% endblock %}

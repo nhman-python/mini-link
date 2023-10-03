@@ -1,0 +1,11 @@
+Flask
+MarkupSafe
+Flask-SQLAlchemy
+Werkzeug
+Flask-WTF
+WTForms
+
+psycopg2-binary
+gunicorn
+pytz
+email_validator
