@@ -15,7 +15,7 @@ Welcome to the Short Link Flask App! This application allows you to create and m
 
 2. Navigate to the project directory:
    ```
-   cd short-link-main
+   cd mini-link
    ```
 
 3. Install the required packages using `pip`:
@@ -59,6 +59,5 @@ Welcome to the Short Link Flask App! This application allows you to create and m
         ├── login.html
         ├── register.html
         └── update-password.html
-```# mini-link
-# mini-link
-# mini-link
+```
+[![Buy Me a Coffee](https://img.buymeacoffee.com/button-api/?url=<your-image-url>&emoji=<emoji>&slug=<your-slug>)](http://buymeacoffee.com/python.tips)
